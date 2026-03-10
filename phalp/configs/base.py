@@ -151,6 +151,11 @@ class FullConfig:
     MODEL: ModelConfig = field(default_factory=ModelConfig)
     EXTRA: ExtraConfig = field(default_factory=ExtraConfig)
 
+    # Directory for externally-managed model weights (resnet, detectron2).
+    # When set, these models are loaded from this directory instead of being
+    # downloaded to the default torch/fvcore caches.
+    local_model_dir: str = ""
+
     # tmp configs
     hmr_type: str = "hmr2018"
 

@@ -174,7 +174,10 @@ def resnet50(pretrained=False, **kwargs):
     if pretrained:
         from collections import OrderedDict
         state_dict = model.state_dict()
-        pretrained_state_dict = model_zoo.load_url(model_urls['resnet50'])
+        cfg = kwargs.get('cfg')
+        local_dir = getattr(cfg, 'local_model_dir', '') if cfg is not None else ''
+        load_kwargs = {'model_dir': local_dir} if local_dir else {}
+        pretrained_state_dict = model_zoo.load_url(model_urls['resnet50'], **load_kwargs)
         for k, v in pretrained_state_dict.items():
             if k not in state_dict:
                 continue

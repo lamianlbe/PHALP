@@ -93,7 +93,9 @@ class PHALP(nn.Module):
             import phalp
             cfg_path = Path(phalp.__file__).parent/'configs'/'cascade_mask_rcnn_vitdet_h_75ep.py'
             self.detectron2_cfg = LazyConfig.load(str(cfg_path))
-            self.detectron2_cfg.train.init_checkpoint = 'https://dl.fbaipublicfiles.com/detectron2/ViTDet/COCO/cascade_mask_rcnn_vitdet_h/f328730692/model_final_f05665.pkl'
+            _vitdet_url = 'https://dl.fbaipublicfiles.com/detectron2/ViTDet/COCO/cascade_mask_rcnn_vitdet_h/f328730692/model_final_f05665.pkl'
+            _vitdet_local = os.path.join(self.cfg.local_model_dir, 'model_final_f05665.pkl') if self.cfg.local_model_dir else ''
+            self.detectron2_cfg.train.init_checkpoint = _vitdet_local if (_vitdet_local and os.path.exists(_vitdet_local)) else _vitdet_url
             for i in range(3):
                 self.detectron2_cfg.model.roi_heads.box_predictors[i].test_score_thresh = 0.5
             self.detector = DefaultPredictor_Lazy(self.detectron2_cfg)
@@ -109,7 +111,9 @@ class PHALP(nn.Module):
         self.detectron2_cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml"))   
         self.detectron2_cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
         self.detectron2_cfg.MODEL.ROI_HEADS.NMS_THRESH_TEST   = 0.4
-        self.detectron2_cfg.MODEL.WEIGHTS   = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml")
+        _maskrcnn_url = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml")
+        _maskrcnn_local = os.path.join(self.cfg.local_model_dir, 'model_final_2d9806.pkl') if self.cfg.local_model_dir else ''
+        self.detectron2_cfg.MODEL.WEIGHTS = _maskrcnn_local if (_maskrcnn_local and os.path.exists(_maskrcnn_local)) else _maskrcnn_url
         self.detectron2_cfg.MODEL.META_ARCHITECTURE =  "GeneralizedRCNN_with_proposals"
         self.detector_x = DefaultPredictor_with_RPN(self.detectron2_cfg)
         
