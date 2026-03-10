@@ -329,7 +329,7 @@ class Pose_transformer_v2(nn.Module):
             
     def load_weights(self, path):
         # import ipdb; ipdb.set_trace()
-        checkpoint_file = torch.load(path)
+        checkpoint_file = torch.load(path, weights_only=False)
         # checkpoint_file_filtered = {k[8:]: v for k, v in checkpoint_file['state_dict'].items()} # remove "encoder." from keys
         checkpoint_file_filtered = {k.replace("encoder.", ""): v for k, v in checkpoint_file['state_dict'].items()} # remove "encoder." from keys
         out = self.encoder.load_state_dict(checkpoint_file_filtered, strict=False)
